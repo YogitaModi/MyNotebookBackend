@@ -1,7 +1,19 @@
 const mongoose = require("mongoose");
-const mongoUrl = "mongodb://localhost:27017";
+
 const connectToMongo = () => {
-  mongoose.connect(mongoUrl);
-  console.log("connected to mongoose");
+  const connectionParams = {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  };
+  try {
+    mongoose.connect(
+      "mongodb+srv://yogitamodi99:viscosityEquilibrium99@cluster1.dhqeg4b.mongodb.net/?retryWrites=true&w=majority",
+      connectionParams
+    );
+    console.log("Database connected successfully");
+  } catch (error) {
+    console.log(error);
+    console.log("Database connection failed");
+  }
 };
 module.exports = connectToMongo;
