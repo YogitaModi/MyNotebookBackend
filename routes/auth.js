@@ -4,8 +4,9 @@ const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
+const fetchuser = require("../middleware/fetchuser");
 
-//  create a user using : POST "api/auth/createuser"   no login require
+// route 1 :  create a user using : POST "api/auth/createuser"   no login require
 const JWT_SECRET = "Yogitaisveryprofessional";
 router.post(
   "/createuser",
@@ -43,7 +44,7 @@ router.post(
 
       // providing auth token when new user is created
       const data = {
-        data: {
+        user: {
           id: user.id,
         },
       };
@@ -57,7 +58,7 @@ router.post(
   }
 );
 
-// creating route for user login POST /api/auth/login -- login not required
+// route 2 : creating route for user login POST /api/auth/login -- login not required
 router.post(
   "/login",
   [
@@ -85,7 +86,7 @@ router.post(
         return res.status(400).json({ error: "enter correct credentials" });
       }
       const data = {
-        data: {
+        user: {
           id: user.id,
         },
       };
@@ -99,4 +100,16 @@ router.post(
   }
 );
 
+// route 3 : get loggedin user details usind : /api/auth/getuser -- login required
+router.post("/getuser", fetchuser, async (req, res) => {
+  try {
+    const userId = req.user;
+
+    const user = await User.findById(userId.id).select("-password");
+    res.json(user);
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ error: "some error occured" });
+  }
+});
 module.exports = router;
