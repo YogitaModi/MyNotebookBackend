@@ -1,10 +1,11 @@
 const jwt = require("jsonwebtoken");
+
 const JWT_SECRET = "Yogitaisveryprofessional";
 
 const fetchuser = (req, res, next) => {
   const token = req.header("auth-token");
   //   console.log("token  ", token);
-
+  // res.json({ token: token });
   if (!token) {
     res.status(401).json({ error: "please authenticate using valid token" });
   }

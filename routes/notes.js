@@ -9,7 +9,6 @@ router.get("/fetchallnotes", fetchuser, async (req, res) => {
   try {
     const notes = await Notes.find({ user: req.user.id });
 
-    console.log(notes);
     res.json(notes);
   } catch (error) {
     console.error(error.message);
@@ -45,6 +44,7 @@ router.post(
         tag,
         user: req.user.id,
       }).save();
+
       res.json(savedNotes);
     } catch (error) {
       console.error(error.message);
@@ -55,7 +55,7 @@ router.post(
 
 // route 3 : updating existing notes using put : /api/notes/updatenotes-- login required
 
-router.put("/updatenote/:id", fetchuser, async (req, res) => {
+router.put("/updatenotes/:id", fetchuser, async (req, res) => {
   try {
     const { title, description, tag } = req.body;
     const newNotes = {};
@@ -94,11 +94,12 @@ router.put("/updatenote/:id", fetchuser, async (req, res) => {
 
 router.delete("/deletenotes/:id", fetchuser, async (req, res) => {
   try {
+    // find the notes that to be deleted
     let findNotes = await Notes.findById(req.params.id);
     if (!findNotes) {
       return res.status(404).send("not found");
     }
-
+    //  allow deletion only notes belong to the user
     if (findNotes.user.toString() !== req.user.id) {
       return res.status(404).send("not allowed");
     }

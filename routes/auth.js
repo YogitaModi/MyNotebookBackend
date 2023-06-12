@@ -8,6 +8,7 @@ const fetchuser = require("../middleware/fetchuser");
 
 // route 1 :  create a user using : POST "api/auth/createuser"   no login require
 const JWT_SECRET = "Yogitaisveryprofessional";
+let success = false;
 router.post(
   "/createuser",
   [
@@ -23,14 +24,17 @@ router.post(
 
     // check whether the user with email exixts already
     if (!result.isEmpty()) {
-      return res.send({ errors: result.array() });
+      return res.send({ success, errors: result.array() });
     }
     try {
       let user = await User.findOne({ email: req.body.email });
       if (user) {
         return res
           .status(400)
-          .json({ error: "sorry a user with this email already exists" });
+          .json({
+            success,
+            error: "sorry a user with this email already exists",
+          });
       }
 
       // creating  hash code for the user password to store in mongodb
@@ -50,7 +54,7 @@ router.post(
       };
       const authToken = jwt.sign(data, JWT_SECRET);
       console.log(authToken);
-      res.json({ authToken });
+      res.json({ success: true, authToken });
     } catch (error) {
       console.error(error.message);
       res.status(500).send("some error occured");
@@ -72,18 +76,22 @@ router.post(
 
     // check whether the user with email exixts already
     if (!result.isEmpty()) {
-      return res.send({ errors: result.array() });
+      return res.send({ success: false, errors: result.array() });
     }
     try {
       const { email, password } = req.body;
       let user = await User.findOne({ email });
       if (!user) {
-        return res.status(400).json({ error: "enter correct credentials " });
+        return res
+          .status(400)
+          .json({ success: false, error: "enter correct credentials " });
       }
 
       const checkPassword = await bcrypt.compare(password, user.password);
       if (!checkPassword) {
-        return res.status(400).json({ error: "enter correct credentials" });
+        return res
+          .status(400)
+          .json({ success: false, error: "enter correct credentials" });
       }
       const data = {
         user: {
@@ -92,7 +100,7 @@ router.post(
       };
       const authToken = jwt.sign(data, JWT_SECRET);
 
-      res.json({ authToken });
+      res.json({ success: true, authToken });
     } catch (error) {
       console.error(error.message);
       res.status(500).send("some error occured");
@@ -109,7 +117,7 @@ router.post("/getuser", fetchuser, async (req, res) => {
     res.json(user);
   } catch (error) {
     console.log(error.message);
-    res.status(500).json({ error: "some error occured" });
+    res.status(500).json({ success: false, error: "some error occured" });
   }
 });
 module.exports = router;
