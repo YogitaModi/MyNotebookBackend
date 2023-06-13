@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
-const dotenv = require("dotenv").config();
+const dotenv = require("dotenv");
+
+dotenv.config();
 
 const connectToMongo = () => {
   const connectionParams = {
@@ -7,10 +9,7 @@ const connectToMongo = () => {
     useUnifiedTopology: true,
   };
   try {
-    mongoose.connect(
-      "mongodb+srv://yogitamodi99:viscosityEquilibrium99@cluster1.dhqeg4b.mongodb.net/myNoteBook?retryWrites=true&w=majority",
-      connectionParams
-    );
+    mongoose.connect(process.env.MONGO_URL, connectionParams);
     console.log("Database connected successfully");
   } catch (error) {
     console.log(error);

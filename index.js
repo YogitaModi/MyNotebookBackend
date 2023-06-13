@@ -2,8 +2,10 @@ const connectToMongo = require("./db");
 connectToMongo();
 const express = require("express");
 const core = require("cors");
+const dotenv = require("dotenv");
+dotenv.config();
 
-const port = 5000;
+const PORT = process.env.PORT_NUMBER;
 
 const app = express();
 app.use(core());
@@ -13,6 +15,6 @@ app.use(express.json());
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/notes", require("./routes/notes"));
 
-app.listen(port, () => {
-  console.log(`MyNoteBook server listening on port http://localhost:${port}`);
+app.listen(PORT, () => {
+  console.log(`MyNoteBook server listening on port http://localhost:${PORT}`);
 });

@@ -1,6 +1,8 @@
 const jwt = require("jsonwebtoken");
+const dotenv = require("dotenv");
+dotenv.config();
 
-const JWT_SECRET = "Yogitaisveryprofessional";
+const JWT_SECRET = process.env.JWT_SECRET;
 
 const fetchuser = (req, res, next) => {
   const token = req.header("auth-token");
@@ -13,8 +15,6 @@ const fetchuser = (req, res, next) => {
     const decode = jwt.verify(token, JWT_SECRET);
 
     req.user = decode.user;
-
-    console.log("from fetchuser file ", req.user);
 
     next();
   } catch (error) {

@@ -5,9 +5,11 @@ const bcrypt = require("bcrypt");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
 const fetchuser = require("../middleware/fetchuser");
+const dotenv = require("dotenv");
+dotenv.config();
 
 // route 1 :  create a user using : POST "api/auth/createuser"   no login require
-const JWT_SECRET = "Yogitaisveryprofessional";
+const JWT_SECRET = process.env.JWT_SECRET;
 let success = false;
 router.post(
   "/createuser",
@@ -29,12 +31,10 @@ router.post(
     try {
       let user = await User.findOne({ email: req.body.email });
       if (user) {
-        return res
-          .status(400)
-          .json({
-            success,
-            error: "sorry a user with this email already exists",
-          });
+        return res.status(400).json({
+          success,
+          error: "sorry a user with this email already exists",
+        });
       }
 
       // creating  hash code for the user password to store in mongodb
